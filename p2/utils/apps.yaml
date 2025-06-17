@@ -1,0 +1,164 @@
+# Application 1
+apiVersion: apps/v1          # Version de l'API Kubernetes pour les Deployments
+kind: Deployment             # Type de ressource = Deployment
+metadata:                    # Métadonnées du Deployment
+  name: app1                 # Nom du Deployment (unique dans le namespace)
+spec:                        # Spécifications du Deployment
+  replicas: 1                # Nombre de pods à maintenir en vie
+  selector:                  # Comment le Deployment trouve SES pods
+    matchLabels:             
+      app: app1              # "Gérer tous les pods avec le label app=app1"
+  template:                  # Template du pod (modèle pour créer les pods)
+    metadata:                # Métadonnées du pod
+      labels:                
+        app: app1            # Label qui sera appliqué à chaque pod créé
+    spec:                    # Spécifications du pod
+      containers:            # Liste des containers dans le pod
+      - name: app1           # Nom du container
+        image: nginx:alpine  # Image Docker à utiliser
+        ports:               # Ports exposés par le container
+        - containerPort: 80  # Nginx écoute sur le port 80
+        volumeMounts:        # Où monter les volumes dans le container
+        - name: html         # Nom du volume (défini plus bas)
+          mountPath: /usr/share/nginx/html  # Chemin dans le container
+      volumes:               # Volumes disponibles pour le pod
+      - name: html           # Nom du volume
+        configMap:           # Type de volume = ConfigMap
+          name: app1-html    # Nom du ConfigMap à utiliser
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app1-html           # Nom du ConfigMap
+data:
+  index.html: |             # Nom du fichier qu'il va créer
+    <html>
+    <body>
+      <h1>Application 1</h1>  # Contenu du fichier
+      <p>Vous êtes sur app1.com !</p>
+    </body>
+    </html>
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-service        # Nom DNS : app1-service.default.svc.cluster.local
+spec:
+  selector:
+    app: app1               # Sélectionne tous les pods avec le label "app: app1"
+  ports:
+  - port: 80                # Port du Service (ce qu'on appelle de l'extérieur)
+    targetPort: 80          # Port du container (nginx écoute sur 80)
+
+---
+# Application 2 (avec 3 répliques)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2
+spec:
+  replicas: 3  # 3 répliques comme demandé
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+      - name: app2
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: app2-html
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app2-html
+data:
+  index.html: |
+    <html>
+    <body>
+      <h1>Application 2</h1>
+      <p>Vous êtes sur app2.com !</p>
+      <p>Cette app a 3 répliques</p>
+    </body>
+    </html>
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2-service
+spec:
+  selector:
+    app: app2
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+# Application 3 (par défaut)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: app3
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: app3-html
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app3-html
+data:
+  index.html: |
+    <html>
+    <body>
+      <h1>Application 3 (par défaut)</h1>
+      <p>Application par défaut</p>
+    </body>
+    </html>
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3-service
+spec:
+  selector:
+    app: app3
+  ports:
+  - port: 80
+    targetPort: 80
