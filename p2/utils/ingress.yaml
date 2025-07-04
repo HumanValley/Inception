@@ -1,22 +1,22 @@
-apiVersion: networking.k8s.io/v1     # Version API pour les Ingress
-kind: Ingress                        # Type de ressource
+apiVersion: networking.k8s.io/v1     
+kind: Ingress                     
 metadata:
-  name: apps-ingress                 # Nom de l'Ingress
-  annotations:                       # Métadonnées spéciales
-    kubernetes.io/ingress.class: traefik  # Quel contrôleur utiliser
-spec:                               # Spécifications de routage
-  rules:                            # Règles de routage
-  - host: app1.com                  # Première règle : si Host = app1.com
+  name: apps-ingress          
+  annotations:                
+    kubernetes.io/ingress.class: traefik  
+spec:                           
+  rules:                    
+  - host: app1.com               
     http:
       paths:
-      - path: /                     # Pour tous les chemins (/)
-        pathType: Prefix            # Type de correspondance
-        backend:                    # Où envoyer la requête
+      - path: /          
+        pathType: Prefix      
+        backend:                  
           service:
-            name: app1-service      # Nom du Service cible
+            name: app1-service    
             port:
-              number: 80            # Port du Service
-  - host: app2.com                  # Deuxième règle : si Host = app2.com
+              number: 80       
+  - host: app2.com              
     http:
       paths:
       - path: /
@@ -26,7 +26,7 @@ spec:                               # Spécifications de routage
             name: app2-service
             port:
               number: 80
-  - http:                           # Règle par défaut (pas de host spécifié)
+  - http:                       
       paths:
       - path: /
         pathType: Prefix
