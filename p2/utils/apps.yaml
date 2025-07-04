@@ -1,38 +1,38 @@
 # Application 1
-apiVersion: apps/v1          # Version de l'API Kubernetes pour les Deployments
-kind: Deployment             # Type de ressource = Deployment
-metadata:                    # Métadonnées du Deployment
-  name: app1                 # Nom du Deployment (unique dans le namespace)
-spec:                        # Spécifications du Deployment
-  replicas: 1                # Nombre de pods à maintenir en vie
-  selector:                  # Comment le Deployment trouve SES pods
+apiVersion: apps/v1         
+kind: Deployment            
+metadata:                   
+  name: app1      
+spec:                    
+  replicas: 1               
+  selector:               
     matchLabels:             
-      app: app1              # "Gérer tous les pods avec le label app=app1"
-  template:                  # Template du pod (modèle pour créer les pods)
-    metadata:                # Métadonnées du pod
+      app: app1  
+  template:             
+    metadata:            
       labels:                
-        app: app1            # Label qui sera appliqué à chaque pod créé
-    spec:                    # Spécifications du pod
-      containers:            # Liste des containers dans le pod
-      - name: app1           # Nom du container
-        image: nginx:alpine  # Image Docker à utiliser
-        ports:               # Ports exposés par le container
-        - containerPort: 80  # Nginx écoute sur le port 80
-        volumeMounts:        # Où monter les volumes dans le container
-        - name: html         # Nom du volume (défini plus bas)
-          mountPath: /usr/share/nginx/html  # Chemin dans le container
-      volumes:               # Volumes disponibles pour le pod
-      - name: html           # Nom du volume
-        configMap:           # Type de volume = ConfigMap
-          name: app1-html    # Nom du ConfigMap à utiliser
+        app: app1    
+    spec:                
+      containers:      
+      - name: app1        
+        image: nginx:alpine 
+        ports:            
+        - containerPort: 80
+        volumeMounts:    
+        - name: html      
+          mountPath: /usr/share/nginx/html 
+      volumes:          
+      - name: html        
+        configMap:        
+          name: app1-html
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app1-html           # Nom du ConfigMap
+  name: app1-html         
 data:
-  index.html: |             # Nom du fichier qu'il va créer
+  index.html: |            
     <html>
     <body>
       <h1>Application 1</h1>  # Contenu du fichier
@@ -44,13 +44,13 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: app1-service        # Nom DNS : app1-service.default.svc.cluster.local
+  name: app1-service  
 spec:
   selector:
-    app: app1               # Sélectionne tous les pods avec le label "app: app1"
+    app: app1              
   ports:
-  - port: 80                # Port du Service (ce qu'on appelle de l'extérieur)
-    targetPort: 80          # Port du container (nginx écoute sur 80)
+  - port: 80       
+    targetPort: 80      
 
 ---
 # Application 2 (avec 3 répliques)
@@ -59,7 +59,7 @@ kind: Deployment
 metadata:
   name: app2
 spec:
-  replicas: 3  # 3 répliques comme demandé
+  replicas: 3
   selector:
     matchLabels:
       app: app2
