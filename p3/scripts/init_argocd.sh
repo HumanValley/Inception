@@ -7,11 +7,9 @@ git clone https://github.com/HumanValley/sajansse_inceptionp3_app.git /vagrant/r
 #docker pull wil42/playground:v1
 #docker pull wil42/playground:v2
 
-echo "⏳ Attente du démarrage de Kubernetes..."
 until kubectl get nodes &>/dev/null; do
   sleep 2
 done
-echo "✅ Kubernetes est prêt !"
 
 kubectl create namespace argocd
 kubectl create namespace dev
@@ -19,7 +17,6 @@ kubectl create namespace dev
 # Ajouter argocd dans k3d
 kubectl apply -n argocd -f /vagrant/utils/argocd.yaml
 
-echo "⏳ Attente de la disponibilité des pods ArgoCD..."
 kubectl wait --namespace argocd \
   --for=condition=Ready pods --all \
   --timeout=180s
