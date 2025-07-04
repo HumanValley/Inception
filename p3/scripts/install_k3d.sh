@@ -1,4 +1,6 @@
 #!/bin/bash
+sudo apt update && sudo apt upgrade
+sudo apt install -y curl
 
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
